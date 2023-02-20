@@ -139,7 +139,7 @@ def pick_pivot(items: List[V], left: int, right: int) -> int:
     return select_fast(items, left, left + (right - left) // 5, mid)
 
 
-def three_partition(items: List[V], left: int, right: int, pivot_index: int, k: int):
+def three_partition(items: List[V], left: int, right: int, pivot_index: int, k: int) -> int:
     """Partition a list into three partitions, elements less than the pivot, those equal, and those greater.
     This runs in O(n) time.
 
@@ -149,6 +149,9 @@ def three_partition(items: List[V], left: int, right: int, pivot_index: int, k: 
         right (int): End index of the range of items to partition.
         pivot_index (int): Index of the element to partition around.
         k (int): Index of the item to select.
+
+    Returns:
+        int: Index of the pivot element.
     """
     pivot_value = items[pivot_index]
 
