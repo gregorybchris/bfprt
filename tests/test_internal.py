@@ -1,9 +1,9 @@
 import pytest
 
-from bfprt.algo import insertion_sort, partition, select, select_fast, swap
+from bfprt.algo import insertion_sort, partition, select, swap
 
 
-class TestSelect:
+class TestInternal:
 
     def test_swap(self):
         items = [4, 1, 2, 5, 9, 8]
@@ -33,17 +33,3 @@ class TestSelect:
         items = [4, 2, 9, 5, 8]
         insertion_sort(items, 0, 4)
         assert items == [2, 4, 5, 8, 9]
-
-    def test_select_fast_small(self):
-        for i in range(5):
-            items = [4, 2, 1, 9, 8]
-            selected_index = select_fast(items, 0, 4, i)
-            sorted = [1, 2, 4, 8, 9]
-            assert items[selected_index] == sorted[i]
-
-    def test_select_fast(self):
-        for i in range(6):
-            items = [4, 2, 1, 9, 5, 8]
-            selected_index = select_fast(items, 0, 5, i)
-            sorted = [1, 2, 4, 5, 8, 9]
-            assert items[selected_index] == sorted[i]
