@@ -1,12 +1,8 @@
-from abc import ABCMeta, abstractmethod
-from typing import Any, TypeVar
+from typing import Protocol
 
 
-class Comparable(metaclass=ABCMeta):
+class Comparable(Protocol):
+    """Protocol for comparable objects."""
 
-    @abstractmethod
-    def __lt__(self, other: Any) -> bool:
-        ...
-
-
-V = TypeVar('V', bound=Comparable)
+    def __lt__(self, other: "Comparable") -> bool:
+        """Less than comparison."""

@@ -1,22 +1,21 @@
-from typing import List
-
-from bfprt.types import V
+from bfprt.types import Comparable
 
 
-def select(items: List[V], left: int, right: int, k: int) -> V:
+def select[T: Comparable](items: list[T], left: int, right: int, k: int) -> T:
     """Quickselect using left item as pivot.
+
     - Returns the k-th smallest element of items within left..right inclusive.
     - Also known as the "k-th order statistic".
     - This runs in O(n^2) time, but average case linear.
 
     Args:
-        items (List[V]): A list of items.
+        items (list[T]): A list of items.
         left (int): Start index of the range of items to select from.
         right (int): End index of the range of items to select from.
         k (int): Index of the item to select.
 
     Returns:
-        V: The k-th smallest element of the list of items.
+        T: The k-th smallest element of the list of items.
     """
     while True:
         # If the list contains only one element return that element
@@ -32,18 +31,19 @@ def select(items: List[V], left: int, right: int, k: int) -> V:
         # Return selected element or recursively search to the correct side
         if k == pivot_index:
             return items[k]
-        elif k < pivot_index:
+        if k < pivot_index:
             right = pivot_index - 1
         else:
             left = pivot_index + 1
 
 
-def partition(items: List[V], left: int, right: int, pivot_index: int) -> int:
+def partition[T: Comparable](items: list[T], left: int, right: int, pivot_index: int) -> int:
     """Partition items into those less than a pivot and those greater.
+
     This partition runs in O(n) time.
 
     Args:
-        items (List[V]): A list of items.
+        items (list[T]): A list of items.
         left (int): Start index of the range of items to partition.
         right (int): End index of the range of items to partition.
         pivot_index (int): Index of the element to partition around.
@@ -69,13 +69,13 @@ def partition(items: List[V], left: int, right: int, pivot_index: int) -> int:
     return store_index
 
 
-def select_fast(items: List[V], left: int, right: int, k: int) -> int:
+def select_fast[T: Comparable](items: list[T], left: int, right: int, k: int) -> int:
     """Quickselect using median of medians.
 
     This runs in O(n) time.
 
     Args:
-        items (List[V]): A list of items.
+        items (list[T]): A list of items.
         left (int): Start index of the range of items to select from.
         right (int): End index of the range of items to select from.
         k (int): Index of the item to select.
@@ -91,13 +91,13 @@ def select_fast(items: List[V], left: int, right: int, k: int) -> int:
 
         if k == pivot_index:
             return k
-        elif k < pivot_index:
+        if k < pivot_index:
             right = pivot_index - 1
         else:
             left = pivot_index + 1
 
 
-def pick_pivot(items: List[V], left: int, right: int) -> int:
+def pick_pivot[T: Comparable](items: list[T], left: int, right: int) -> int:
     """Median of medians pivot selection.
 
     1. Divide items into groups of at most 5 elements.
@@ -107,7 +107,7 @@ def pick_pivot(items: List[V], left: int, right: int) -> int:
     We are guaranteed that this pivot is between the 30th and 70th percentiles.
 
     Args:
-        items (List[V]): A list of items.
+        items (list[T]): A list of items.
         left (int): Start index of the range of items to select a pivot.
         right (int): End index of the range of items to select a pivot.
 
@@ -115,7 +115,8 @@ def pick_pivot(items: List[V], left: int, right: int) -> int:
         int: Index of the pivot element.
     """
     # For 5 or fewer elements get median with insertion sort
-    if right - left < 5:
+    constant_sort_threshold = 5
+    if right - left < constant_sort_threshold:
         insertion_sort(items, left, right)
         return (left + right) // 2
 
@@ -135,16 +136,17 @@ def pick_pivot(items: List[V], left: int, right: int) -> int:
         swap(items, group_median, left + (i - left) // 5)
 
     # Compute the median of all group medians
-    mid = (right - left) / 10 + left + 1
+    mid = int((right - left) / 10 + left + 1)
     return select_fast(items, left, left + (right - left) // 5, mid)
 
 
-def three_partition(items: List[V], left: int, right: int, pivot_index: int, k: int) -> int:
+def three_partition[T: Comparable](items: list[T], left: int, right: int, pivot_index: int, k: int) -> int:
     """Partition a list into three partitions, elements less than the pivot, those equal, and those greater.
+
     This runs in O(n) time.
 
     Args:
-        items (List[V]): A list of items.
+        items (list[T]): A list of items.
         left (int): Start index of the range of items to partition.
         right (int): End index of the range of items to partition.
         pivot_index (int): Index of the element to partition around.
@@ -184,11 +186,11 @@ def three_partition(items: List[V], left: int, right: int, pivot_index: int, k: 
     return store_index_eq  # k is in the group of larger elements
 
 
-def swap(items: List[V], a: int, b: int) -> None:
+def swap[T: Comparable](items: list[T], a: int, b: int) -> None:
     """Swap two items in a list given their indices.
 
     Args:
-        items (List[V]): A list of items.
+        items (list[T]): A list of items.
         a (int): Index of the first item to swap.
         b (int): Index of the second item to swap.
     """
@@ -197,12 +199,13 @@ def swap(items: List[V], a: int, b: int) -> None:
     items[b] = vt
 
 
-def insertion_sort(items: List[V], left: int, right: int) -> None:
+def insertion_sort[T: Comparable](items: list[T], left: int, right: int) -> None:
     """Insertion sort.
+
     This runs in O(n^2) time.
 
     Args:
-        items (List[V]): A list of items.
+        items (list[T]): A list of items.
         left (int): Start index of the range of items to sort.
         right (int): End index of the range of items to sort.
     """
