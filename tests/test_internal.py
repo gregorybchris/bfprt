@@ -1,11 +1,11 @@
 import pytest
-from bfprt.algo import insertion_sort, partition, select, swap
+from bfprt.algo import _insertion_sort, _partition, _select, _swap
 
 
 class TestInternal:
     def test_swap(self) -> None:
         items = [4, 1, 2, 5, 9, 8]
-        swap(items, 2, 3)
+        _swap(items, 2, 3)
         assert items == [4, 1, 5, 2, 9, 8]
 
     @pytest.mark.parametrize(
@@ -19,18 +19,19 @@ class TestInternal:
         ],
     )
     def test_partition(self, items: list[int], pivot_index: int, expected_items: list[int], expected_index: int):
-        pivot_index = partition(items, 0, len(items) - 1, pivot_index)
+        pivot_index = _partition(items, 0, len(items) - 1, pivot_index)
         assert pivot_index == expected_index
         assert items == expected_items
 
     def test_select(self) -> None:
-        for i in range(6):
+        n_items = 6
+        for k in range(n_items):
             items = [4, 2, 1, 9, 5, 8]
-            selected = select(items, 0, 5, i)
+            selected = _select(items, 0, 5, k)
             sorted_items = [1, 2, 4, 5, 8, 9]
-            assert selected == sorted_items[i]
+            assert selected == sorted_items[k]
 
     def test_insertion_sort(self) -> None:
         items = [4, 2, 9, 5, 8]
-        insertion_sort(items, 0, 4)
+        _insertion_sort(items, 0, 4)
         assert items == [2, 4, 5, 8, 9]

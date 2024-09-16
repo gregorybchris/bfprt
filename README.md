@@ -34,7 +34,7 @@ items = [4, 2, 1, 9, 5, 8]
 k = 3
 
 # This is the index of the kth smallest element
-selected_index = select_fast(items, 0, 5, k)
+selected_index = select_fast(items, k)
 
 # If k is len(items) // 2, then this is the median
 kth_order_statistic = items[selected_index]

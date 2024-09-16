@@ -1,7 +1,7 @@
 from bfprt.types import Comparable
 
 
-def select[T: Comparable](items: list[T], left: int, right: int, k: int) -> T:
+def _select[T: Comparable](items: list[T], left: int, right: int, k: int) -> T:
     """Quickselect using left item as pivot.
 
     - Returns the k-th smallest element of items within left..right inclusive.
@@ -26,7 +26,7 @@ def select[T: Comparable](items: list[T], left: int, right: int, k: int) -> T:
         pivot_index = left
 
         # Place pivot element in sorted position
-        pivot_index = partition(items, left, right, pivot_index)
+        pivot_index = _partition(items, left, right, pivot_index)
 
         # Return selected element or recursively search to the correct side
         if k == pivot_index:
@@ -37,7 +37,7 @@ def select[T: Comparable](items: list[T], left: int, right: int, k: int) -> T:
             left = pivot_index + 1
 
 
-def partition[T: Comparable](items: list[T], left: int, right: int, pivot_index: int) -> int:
+def _partition[T: Comparable](items: list[T], left: int, right: int, pivot_index: int) -> int:
     """Partition items into those less than a pivot and those greater.
 
     This partition runs in O(n) time.
@@ -55,21 +55,38 @@ def partition[T: Comparable](items: list[T], left: int, right: int, pivot_index:
     pivot_value = items[pivot_index]
 
     # Move pivot to end
-    swap(items, pivot_index, right)
+    _swap(items, pivot_index, right)
 
     # Swap items until they are partitioned by the pivot element
     store_index = left
     for i in range(left, right):
         if items[i] < pivot_value:
-            swap(items, store_index, i)
+            _swap(items, store_index, i)
             store_index += 1
 
     # Move pivot to its final place
-    swap(items, right, store_index)
+    _swap(items, right, store_index)
     return store_index
 
 
-def select_fast[T: Comparable](items: list[T], left: int, right: int, k: int) -> int:
+def select_fast[T: Comparable](items: list[T], k: int) -> int:
+    """Quickselect using median of medians.
+
+    This runs in O(n) time.
+
+    Args:
+        items (list[T]): A list of items.
+        k (int): Index of the item to select.
+
+    Returns:
+        int: Final index of the median element.
+    """
+    left = 0
+    right = len(items) - 1
+    return _select_fast(items, left, right, k)
+
+
+def _select_fast[T: Comparable](items: list[T], left: int, right: int, k: int) -> int:
     """Quickselect using median of medians.
 
     This runs in O(n) time.
@@ -86,8 +103,8 @@ def select_fast[T: Comparable](items: list[T], left: int, right: int, k: int) ->
     while True:
         if left == right:
             return left
-        pivot_index = pick_pivot(items, left, right)
-        pivot_index = three_partition(items, left, right, pivot_index, k)
+        pivot_index = _pick_pivot(items, left, right)
+        pivot_index = _three_partition(items, left, right, pivot_index, k)
 
         if k == pivot_index:
             return k
@@ -97,7 +114,7 @@ def select_fast[T: Comparable](items: list[T], left: int, right: int, k: int) ->
             left = pivot_index + 1
 
 
-def pick_pivot[T: Comparable](items: list[T], left: int, right: int) -> int:
+def _pick_pivot[T: Comparable](items: list[T], left: int, right: int) -> int:
     """Median of medians pivot selection.
 
     1. Divide items into groups of at most 5 elements.
@@ -117,7 +134,7 @@ def pick_pivot[T: Comparable](items: list[T], left: int, right: int) -> int:
     # For 5 or fewer elements get median with insertion sort
     constant_sort_threshold = 5
     if right - left < constant_sort_threshold:
-        insertion_sort(items, left, right)
+        _insertion_sort(items, left, right)
         return (left + right) // 2
 
     # Chunk n items into n / 5 groups of 5 elements
@@ -125,22 +142,21 @@ def pick_pivot[T: Comparable](items: list[T], left: int, right: int) -> int:
         group_right = i + 4
 
         # Handle special case of n not a multiple of 5
-        if group_right > right:
-            group_right = right
+        group_right = min(group_right, right)
 
         # Compute the median of the group
-        insertion_sort(items, i, group_right)
+        _insertion_sort(items, i, group_right)
 
         # Move group median to one of the first n / 5 positions
         group_median = (i + group_right) // 2
-        swap(items, group_median, left + (i - left) // 5)
+        _swap(items, group_median, left + (i - left) // 5)
 
     # Compute the median of all group medians
     mid = int((right - left) / 10 + left + 1)
-    return select_fast(items, left, left + (right - left) // 5, mid)
+    return _select_fast(items, left, left + (right - left) // 5, mid)
 
 
-def three_partition[T: Comparable](items: list[T], left: int, right: int, pivot_index: int, k: int) -> int:
+def _three_partition[T: Comparable](items: list[T], left: int, right: int, pivot_index: int, k: int) -> int:
     """Partition a list into three partitions, elements less than the pivot, those equal, and those greater.
 
     This runs in O(n) time.
@@ -158,24 +174,24 @@ def three_partition[T: Comparable](items: list[T], left: int, right: int, pivot_
     pivot_value = items[pivot_index]
 
     # Move pivot to end
-    swap(items, pivot_index, right)
+    _swap(items, pivot_index, right)
 
     # Move all elements smaller than the pivot to the left of the pivot
     store_index = left
     for i in range(left, right):
         if items[i] < pivot_value:
-            swap(items, store_index, i)
+            _swap(items, store_index, i)
             store_index += 1
 
     # Move all elements equal to the pivot right after the smaller elements
     store_index_eq = store_index
     for i in range(store_index, right):
         if items[i] == pivot_value:
-            swap(items, store_index_eq, i)
+            _swap(items, store_index_eq, i)
             store_index_eq += 1
 
     # Move pivot to its final place
-    swap(items, right, store_index_eq)
+    _swap(items, right, store_index_eq)
 
     # Return location of pivot considering the desired location n
     if k < store_index:
@@ -186,7 +202,7 @@ def three_partition[T: Comparable](items: list[T], left: int, right: int, pivot_
     return store_index_eq  # k is in the group of larger elements
 
 
-def swap[T: Comparable](items: list[T], a: int, b: int) -> None:
+def _swap[T: Comparable](items: list[T], a: int, b: int) -> None:
     """Swap two items in a list given their indices.
 
     Args:
@@ -199,7 +215,7 @@ def swap[T: Comparable](items: list[T], a: int, b: int) -> None:
     items[b] = vt
 
 
-def insertion_sort[T: Comparable](items: list[T], left: int, right: int) -> None:
+def _insertion_sort[T: Comparable](items: list[T], left: int, right: int) -> None:
     """Insertion sort.
 
     This runs in O(n^2) time.
@@ -213,6 +229,6 @@ def insertion_sort[T: Comparable](items: list[T], left: int, right: int) -> None
     while i <= right:
         j = i
         while j > left and items[j - 1] > items[j]:
-            swap(items, j - 1, j)
+            _swap(items, j - 1, j)
             j -= 1
         i += 1

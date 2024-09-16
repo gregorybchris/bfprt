@@ -13,7 +13,7 @@ license = "Apache Software License"
 name = "bfprt"
 readme = "README.md"
 repository = "https://github.com/gregorybchris/bfprt"
-version = "0.2.2"
+version = "0.3.0"
 
 [[tool.poetry.packages]]
 include = "bfprt"
